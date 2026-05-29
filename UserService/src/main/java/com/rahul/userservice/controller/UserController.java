@@ -1,6 +1,7 @@
 package com.rahul.userservice.controller;
 
 import com.rahul.userservice.dto.LoginRequestDto;
+import com.rahul.userservice.dto.LoginResponseDto;
 import com.rahul.userservice.dto.SignupRequestDto;
 import com.rahul.userservice.dto.UserDto;
 import com.rahul.userservice.service.AuthService;
@@ -25,11 +26,11 @@ public class UserController {
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto){
-//        String token = authService.login(loginRequestDto);
-//        return ResponseEntity.ok(token);
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto){
+        LoginResponseDto response = authService.login(loginRequestDto);
+        return ResponseEntity.ok(response);
+    }
 
 
 

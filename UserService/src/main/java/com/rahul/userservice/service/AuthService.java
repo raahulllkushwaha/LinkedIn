@@ -1,9 +1,12 @@
 package com.rahul.userservice.service;
 
+import com.rahul.userservice.dto.LoginRequestDto;
+import com.rahul.userservice.dto.LoginResponseDto;
 import com.rahul.userservice.dto.SignupRequestDto;
 import com.rahul.userservice.dto.UserDto;
 import com.rahul.userservice.entity.User;
 import com.rahul.userservice.exception.BadRequestException;
+import com.rahul.userservice.exception.ResourceNotFoundException;
 import com.rahul.userservice.repo.UserRepo;
 import com.rahul.userservice.utils.Bcrypt;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ public class AuthService {
 
     private final UserRepo userRepo;
     private final ModelMapper modelMapper;
+    private final JwtService jwtService;
 
     public UserDto signUp(SignupRequestDto signupRequestDto){
         log.info("Signup a user with email: {}", signupRequestDto.getEmail());
@@ -33,4 +37,22 @@ public class AuthService {
         return modelMapper.map(user, UserDto.class);
     }
 
+    public LoginResponseDto login(LoginRequestDto loginRequestDto) {
+        log.info("Login req for a user with email: {}", loginRequestDto.getEmail());
+
+        User user = userRepo.findByEmail(loginRequestDto.getEmail())
+                .orElseThrow(() -> new BadRequestException("Incorrect Email or Password"));
+
+        boolean isPasswordMatch = Bcrypt.match(loginRequestDto.getPassword(), user.getPassword());
+        if(!isPasswordMatch){
+            throw new BadRequestException("Incorrect Email or Password");
+        }
+        String token = jwtService.generateAccessToken(user);
+        return new LoginResponseDto(
+                token,
+                user.getId(),
+                user.getEmail(),
+                user.getName()
+        );
+    }
 }
