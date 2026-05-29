@@ -1,6 +1,6 @@
 package com.rahul.userservice.exception;
-import com.rahul.postservice.exception.ApiError;
-import org.apache.coyote.BadRequestException;
+import com.rahul.userservice.exception.ApiError;
+//import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
