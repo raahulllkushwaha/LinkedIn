@@ -1,5 +1,7 @@
 package com.rahul.apigateway.config;
 
+import com.rahul.apigateway.filter.AuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.server.mvc.filter.BeforeFilterFunctions;
 import org.springframework.cloud.gateway.server.mvc.filter.LoadBalancerFilterFunctions;
 import org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions;
@@ -11,7 +13,10 @@ import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
 @Configuration
+@RequiredArgsConstructor
 public class GatewayConfig {
+
+    private final AuthenticationFilter authenticationFilter;
 
     @Bean
     public RouterFunction<ServerResponse> userServiceRoute() {
@@ -28,6 +33,7 @@ public class GatewayConfig {
         return GatewayRouterFunctions.route("posts-service")
                 .route(RequestPredicates.path("/api/v1/posts/**"),
                         HandlerFunctions.http())
+                .filter(authenticationFilter)
                 .filter(LoadBalancerFilterFunctions.lb("POSTSERVICE"))
                 .before(BeforeFilterFunctions.rewritePath("/api/v1/posts/(?<segment>.*)", "/posts/${segment}"))
                 .build();
@@ -38,6 +44,7 @@ public class GatewayConfig {
         return GatewayRouterFunctions.route("connections-service")
                 .route(RequestPredicates.path("/api/v1/connections/**"),
                         HandlerFunctions.http())
+                .filter(authenticationFilter)
                 .filter(LoadBalancerFilterFunctions.lb("CONNECTIONSSERVICE"))
                 .before(BeforeFilterFunctions.rewritePath("/api/v1/connections/(?<segment>.*)", "/connections/${segment}"))
                 .build();

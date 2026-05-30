@@ -1,5 +1,8 @@
 package com.rahul.postservice.service;
 
+import com.rahul.postservice.auth.AuthContextHolder;
+import com.rahul.postservice.client.ConnectionsServiceClient;
+import com.rahul.postservice.dto.PersonDto;
 import com.rahul.postservice.dto.PostCreateRequestDto;
 import com.rahul.postservice.dto.PostDto;
 import com.rahul.postservice.entity.Post;
@@ -22,8 +25,9 @@ public class PostService {
     private final PostRepo postRepo;
 
     private final ModelMapper modelMapper;
-
-    public PostDto createPost(PostCreateRequestDto postCreateRequestDto, Long userId) {
+    private final ConnectionsServiceClient connectionsServiceClient;
+    public PostDto createPost(PostCreateRequestDto postCreateRequestDto) {
+        Long userId = AuthContextHolder.getCurrentUserId();
         log.info("Creating post for user with ID: {}", userId);
         Post post = modelMapper.map(postCreateRequestDto, Post.class);
         post.setUserId(userId);
@@ -33,6 +37,11 @@ public class PostService {
 
     public PostDto getPostById(Long postId) {
         log.info("Getting post with ID: {}", postId);
+        Long userId = AuthContextHolder.getCurrentUserId();
+
+        // TODO: Will remove this in future
+        // call the connection service from the post service and pass the userId inside the header
+        List<PersonDto> personDtoList = connectionsServiceClient.getFirstDegreeConnections(userId);
         Post post = postRepo.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found " + "with ID: "
                         + postId));

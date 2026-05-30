@@ -1,5 +1,6 @@
 package com.rahul.postservice.controller;
 
+import com.rahul.postservice.auth.AuthContextHolder;
 import com.rahul.postservice.dto.PostCreateRequestDto;
 import com.rahul.postservice.dto.PostDto;
 import com.rahul.postservice.service.PostService;
@@ -17,24 +18,23 @@ import java.util.List;
 @RequestMapping("/core")
 public class PostController {
 
-    @Autowired
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostCreateRequestDto postCreateRequestDto, HttpServletRequest httpServletRequest){
-//        httpServletRequest.getHeader("x-author");
-        PostDto postDto = postService.createPost(postCreateRequestDto, 1L);
+    public ResponseEntity<PostDto> createPost(@RequestBody PostCreateRequestDto postCreateRequestDto) {
+        PostDto postDto = postService.createPost(postCreateRequestDto);
         return new ResponseEntity<>(postDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostDto> getPost(@PathVariable Long postId){
+    public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
+        Long userId = AuthContextHolder.getCurrentUserId();
         PostDto postDto = postService.getPostById(postId);
         return ResponseEntity.ok(postDto);
     }
 
     @GetMapping("/users/{userId}/allPosts")
-    public ResponseEntity<List<PostDto>> getAllPostsOfUser(@PathVariable Long userId){
+    public ResponseEntity<List<PostDto>> getAllPostsOfUser(@PathVariable Long userId) {
         List<PostDto> posts = postService.getAllPostsOfUser(userId);
         return ResponseEntity.ok(posts);
     }

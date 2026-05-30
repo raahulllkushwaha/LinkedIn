@@ -18,9 +18,8 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
         </processorPath>
         <module name="UserService" />
-        <module name="PostService" />
       </profile>
-      <profile name="Annotation profile for APIGateway" enabled="true">
+      <profile name="Annotation profile for PostService" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -28,6 +27,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
         </processorPath>
         <module name="ConnectionsService" />
+        <module name="PostService" />
         <module name="APIGateway" />
       </profile>
     </annotationProcessing>
