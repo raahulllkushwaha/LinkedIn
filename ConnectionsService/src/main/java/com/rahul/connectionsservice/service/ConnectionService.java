@@ -18,4 +18,11 @@ public class ConnectionService {
         log.info("Getting first degree connections of user with ID: {}", userId);
         return personRepo.getFirstDegreeConnections(userId);
     }
+    public List<Person> getSecondDegreeConnectionsOfUsers(Long userId) {
+        return personRepo.getSecondDegreeConnections(userId);
+    }
+
+    public List<Person> getThirdDegreeConnectionsOfUsers(Long userId) {
+        return personRepo.getThirdDegreeConnections(userId);
+    }
 }

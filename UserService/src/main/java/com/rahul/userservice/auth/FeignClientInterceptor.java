@@ -1,6 +1,6 @@
 package com.rahul.userservice.auth;
 
-import com.rahul.postservice.auth.AuthContextHolder;
+
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.stereotype.Component;
