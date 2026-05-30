@@ -4,29 +4,6 @@ server:
 spring:
   application:
     name: APIGateway
-  cloud:
-    gateway:
-      routes:
-        - id: user-service
-          uri: lb://USERSERVICE
-          predicates:
-            - Path=/api/v1/users/**
-          filters:
-            - StripPrefix=2
-
-        - id: posts-service
-          uri: lb://POSTSERVICE
-          predicates:
-            - Path=/api/v1/posts/**
-          filters:
-            - StripPrefix=2
-
-        - id: connections-service
-          uri: lb://CONNECTIONSSERVICE
-          predicates:
-            - Path=/api/v1/connections/**
-          filters:
-            - StripPrefix=2
 
 eureka:
   client:
