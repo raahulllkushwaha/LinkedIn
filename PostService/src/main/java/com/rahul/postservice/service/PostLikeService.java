@@ -1,7 +1,9 @@
 package com.rahul.postservice.service;
 
+import com.rahul.postservice.auth.AuthContextHolder;
 import com.rahul.postservice.entity.Post;
 import com.rahul.postservice.entity.PostLike;
+import com.rahul.postservice.event.PostLiked;
 import com.rahul.postservice.exception.BadRequestException;
 import com.rahul.postservice.exception.ResourceNotFoundException;
 import com.rahul.postservice.repo.PostLikeRepo;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,11 +27,13 @@ public class PostLikeService {
     @Autowired
     private final ModelMapper modelMapper;
 
+    private final KafkaTemplate<Long, PostLiked> postLikedKafkaTemplate;
+
     @Transactional
     public void likePost(Long postId) {
-        Long userId = 1L;
+        Long userId = AuthContextHolder.getCurrentUserId();
         log.info("User with ID: {} like the post with ID: {}", userId, postId);
-       postRepo.findById(postId)
+        Post post = postRepo.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with ID: " + postId));
 
         boolean hasAlreadyLiked = postLikeRepo.existsByUserIdAndPostId(userId, postId);
@@ -41,11 +46,17 @@ public class PostLikeService {
         postLikeRepo.save(postLike);
 
         // to do: send the noti to users;
+        PostLiked postLiked = PostLiked.builder()
+                .postId(postId)
+                .likedByUserId(userId)
+                .ownerUserId(post.getUserId())
+                .build();
+        postLikedKafkaTemplate.send("post_liked_topic", postLiked);
     }
 
     @Transactional
     public void unlikPost(Long postId) {
-        Long userId = 1L;
+        Long userId = AuthContextHolder.getCurrentUserId();
         log.info("User with ID: {} unlike the post with ID: {}", userId, postId);
         postRepo.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with ID: " + postId));

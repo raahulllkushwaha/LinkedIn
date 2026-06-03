@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8090
 jwt.secretKey: W+CR9753CIqsRUH46OhUz0FABZ/iCjhm3hr9r95p9QUFcnSJjRm80jnddvyvmQf1BE3mRRhKSvQhVQvKkGpWNA==
 spring:
   application:
